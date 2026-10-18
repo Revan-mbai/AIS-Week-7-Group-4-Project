@@ -424,7 +424,7 @@
           <div class="mini">
             <h5>Right answer or not?</h5>
             <div class="verdict">Work with a right answer</div>
-            <p>Every check is a fixed policy rule: the category limit, the 30-day deadline and the receipt rule. The same claim always gets the same result, and I can verify each one by hand. In my runs, a S$214 client-entertainment claim came back "OVER by S$64.00" against the S$150 limit, and a S$120 meal came back "OVER by S$90.00" against S$30. Both match the policy exactly. Even my tricky case had a right answer: a category with no rule broke the check, which meant a rule was missing, not that judgement was needed.</p>
+            <p>Every check is a fixed policy rule: the category limit, the 30-day deadline and the receipt rule. The same claim always gets the same result, and I can verify each one by hand. In my runs, a S$23 meal passed. Claims of S$120 (meal), S$214 (client entertainment) and S$650 (medical) came back "OVER by" S$90.00, S$64.00 and S$350.00. A taxi claim made 67 days after the expense came back "LATE (67 days)". Even my tricky case had a right answer: a claim dated 11 days in the future passed, because the 30-day rule only checked for late claims. That was a missing rule, not a judgement call. After I added a future-date check, the same claim came back "FAIL: FUTURE DATE".</p>
           </div>
           <div class="mini">
             <h5>Together or alone?</h5>
@@ -499,18 +499,19 @@
 
   /* ---------- Explainer: same rules as the Google Sheet ---------- */
   var POLICY = {"Meal": 30, "Taxi": 50, "Client entertainment": 150, "Medical Claim": 300};
+  /* These are real runs from my response sheet */
   var CLAIMS = [
-    {key:'pass',   label:'Passes',      name:'Mei',   cat:'Taxi',                 purpose:'Taxi to a client meeting',    amt:28,  days:3,  receipt:'Yes'},
-    {key:'over',   label:'Over limit',  name:'Jack',  cat:'Client entertainment', purpose:'Business proposal dinner',    amt:214, days:12, receipt:'Yes'},
-    {key:'late',   label:'Late',        name:'Arjun', cat:'Meal',                 purpose:'Lunch during a site visit',   amt:25,  days:41, receipt:'Yes'},
-    {key:'tricky', label:'Tricky case', name:'Sara',  cat:'Other',                purpose:'Printing for a client pitch', amt:60,  days:2,  receipt:'No'}
+    {key:'pass',   label:'Passes',      name:'Test 2',        cat:'Meal',                 purpose:'Client catchup',     amt:23,  days:11,  receipt:'Yes'},
+    {key:'over',   label:'Over limit',  name:'Jack',          cat:'Client entertainment', purpose:'Business proposal',  amt:214, days:12,  receipt:'Yes'},
+    {key:'late',   label:'Late',        name:'Test 1',        cat:'Taxi',                 purpose:'Red eye flight',     amt:45,  days:67,  receipt:'Yes'},
+    {key:'tricky', label:'Tricky case', name:'Tricky test 2', cat:'Medical Claim',        purpose:'Workplace incident', amt:25,  days:-11, receipt:'Yes'}
   ];
 
   function check(c){
     var limit = POLICY[c.cat];
     var hasLimit = typeof limit === 'number';
     var within = hasLimit ? (c.amt <= limit ? 'OK' : 'OVER by S$' + (c.amt - limit).toFixed(2)) : 'NO LIMIT SET – manager review';
-    var ontime = c.days <= 30 ? 'OK' : 'LATE (' + c.days + ' days)';
+    var ontime = c.days < 0 ? 'FUTURE DATE' : (c.days <= 30 ? 'OK' : 'LATE (' + c.days + ' days)');
     var receipt = (c.amt > 20 && c.receipt !== 'Yes') ? 'MISSING' : 'OK';
     var pass = within === 'OK' && ontime === 'OK' && receipt === 'OK';
     var parts = [];
@@ -528,7 +529,7 @@
             'Nothing is decided yet. The form only collects the facts the rules need.'],
       ex:function(c){ return '<div class="ex-lbl">What the form collects</div><dl class="kv">' +
         '<dt>Name</dt><dd>' + c.name + '</dd><dt>Category</dt><dd>' + c.cat + '</dd><dt>Purpose</dt><dd>' + c.purpose + '</dd>' +
-        '<dt>Amount</dt><dd>S$' + c.amt + '</dd><dt>Date of expense</dt><dd>' + c.days + ' days ago</dd><dt>Receipt available</dt><dd>' + c.receipt + '</dd></dl>'; } },
+        '<dt>Amount</dt><dd>S$' + c.amt + '</dd><dt>Date of expense</dt><dd>' + (c.days < 0 ? (-c.days) + ' days in the future' : c.days + ' days before the claim') + '</dd><dt>Receipt available</dt><dd>' + c.receipt + '</dd></dl>'; } },
     { short:'Check', actor:'AI inside · encode my rules', cls:'rules', title:'The sheet checks it against the policy',
       text:['Formulas in the response sheet apply three fixed rules the moment the row lands: the category limit, the 30-day deadline and the receipt rule.',
             'The same claim always gets the same answer. That is what makes this work with a right answer.'],
@@ -537,7 +538,7 @@
         '<div class="line"><span>Submitted within 30 days (' + c.days + ' days)</span>' + chip(r.ontime) + '</div>' +
         '<div class="line"><span>Receipt (required above S$20)</span>' + chip(r.receipt) + '</div>' +
         '<div class="result ' + (r.pass ? 'ok' : 'bad') + '"><small>Result</small><b>' + r.result + '</b></div></div>' +
-        (c.key === 'tricky' ? '<p class="note">Before my fix, this showed <code>#N/A</code> because "Other" had no rule. The fix sends it to the manager instead of breaking.</p>' : ''); } },
+        (c.key === 'tricky' ? '<p class="note">Before my fix, this claim came back <code>OK</code> and <code>PASS</code>: the 30-day rule only checked for late claims, so a date 11 days in the future slipped through. The fix adds a future-date check, and the same claim now fails.</p>' : ''); } },
     { short:'Notify', actor:'Automate · Zapier', cls:'auto', title:'Zapier emails the line manager',
       text:['One trigger and one action: New Spreadsheet Row, then Gmail Send Email. The email carries the claim, each check and the result.',
             'The "To" field is fixed to my own address, so nothing reaches the employee.'],
