@@ -375,7 +375,6 @@
   <section class="panel" aria-labelledby="ex-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">Interactive explainer</div>
         <h3 class="sec-title" id="ex-title">How a claim moves through the agent</h3>
       </div>
       <div class="picker">
@@ -558,7 +557,7 @@
         '<p class="note">' + (r.pass ? 'PASS is a pre-check, not an approval. The manager still signs.' : 'FAIL is a flag, not a rejection. The manager decides.') + '</p>'; } }
   ];
 
-  var ci = 1, si = 0;
+  var ci = 0, si = 0;
   var seg = document.getElementById('seg'), stepsEl = document.getElementById('steps');
   var panel = document.getElementById('stagePanel'), fill = document.getElementById('fill');
   var prev = document.getElementById('prev'), next = document.getElementById('next'), count = document.getElementById('stepCount');
@@ -566,7 +565,7 @@
   CLAIMS.forEach(function(c, i){
     var b = document.createElement('button');
     b.type = 'button'; b.textContent = c.label;
-    b.addEventListener('click', function(){ ci = i; render(true); });
+    b.addEventListener('click', function(){ ci = i; si = 0; render(true); });
     seg.appendChild(b);
   });
   STEPS.forEach(function(s, i){
@@ -585,7 +584,11 @@
       b.classList.toggle('done', i < si);
     });
     fill.style.width = (75 * si / (STEPS.length - 1)) + '%';
-    prev.disabled = si === 0; next.disabled = si === STEPS.length - 1;
+    var lastStep = STEPS.length - 1, lastClaim = CLAIMS.length - 1;
+    prev.disabled = si === 0 && ci === 0;
+    next.disabled = si === lastStep && ci === lastClaim;
+    prev.textContent = (si === 0 && ci > 0) ? '← Back: ' + CLAIMS[ci - 1].label : '← Back';
+    next.textContent = (si === lastStep && ci < lastClaim) ? 'Next: ' + CLAIMS[ci + 1].label + ' →' : 'Next →';
     count.textContent = 'Step ' + (si + 1) + ' of ' + STEPS.length + ' · use ← → keys';
     var html = '<div><span class="actor ' + s.cls + '">' + s.actor + '</span><h4>' + s.title + '</h4>' +
       s.text.map(function(t){ return '<p class="txt">' + t + '</p>'; }).join('') + '</div>' +
@@ -595,13 +598,27 @@
       setTimeout(function(){ panel.innerHTML = html; panel.classList.remove('swap'); }, 160);
     } else { panel.innerHTML = html; }
   }
-  prev.addEventListener('click', function(){ if (si > 0){ si--; render(true); } });
-  next.addEventListener('click', function(){ if (si < STEPS.length - 1){ si++; render(true); } });
+  /* Next/Back move through the steps, then on to the next (or previous) claim tab */
+  function go(delta){
+    var lastStep = STEPS.length - 1, lastClaim = CLAIMS.length - 1;
+    if (delta > 0){
+      if (si < lastStep) si++;
+      else if (ci < lastClaim){ ci++; si = 0; }
+      else return;
+    } else {
+      if (si > 0) si--;
+      else if (ci > 0){ ci--; si = lastStep; }
+      else return;
+    }
+    render(true);
+  }
+  prev.addEventListener('click', function(){ go(-1); });
+  next.addEventListener('click', function(){ go(1); });
   document.addEventListener('keydown', function(e){
     if (!body.classList.contains('focused')) return;
     if (e.target.closest && e.target.closest('input,textarea,select')) return;
-    if (e.key === 'ArrowRight' && si < STEPS.length - 1){ si++; render(true); }
-    if (e.key === 'ArrowLeft' && si > 0){ si--; render(true); }
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft') go(-1);
   });
   render(false);
 
