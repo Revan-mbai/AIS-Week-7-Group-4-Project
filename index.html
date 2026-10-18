@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Group 4 Quadrant Submission</title>
-<meta name="description" content="Human–AI task matrix: catching missed emails and drafting replies every night at 9:00 PM.">
+<meta name="description" content="Human–AI task matrix for Group 4, with Revan's Expense Claim Pre-Check agent.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f4f1ea; --paper:#fbfaf6; --ink:#1d1b18; --muted:#6b665d; --line:#e2ddd2;
@@ -15,32 +15,40 @@
     --amber:#fbeccd; --amber-ink:#8a5a0b; --amber-dot:#d9a13a;
     --green:#e1f0dc; --green-ink:#336b2a; --green-dot:#6aaa5c;
     --rose:#f8e0e0;  --rose-ink:#8f3434;  --rose-dot:#d47474;
+    --navy:#17324D;
   }
+  @property --k{syntax:'<number>';inherits:true;initial-value:1}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
   body{
+    min-height:100vh;
     background:var(--bg);
     background-image:radial-gradient(circle at 15% 10%,#fff8 0,transparent 40%),radial-gradient(circle at 85% 90%,#e9e3d6 0,transparent 45%);
+    background-attachment:fixed;
     color:var(--ink);font-family:Inter,system-ui,sans-serif;
-    display:grid;place-items:center;padding:16px;-webkit-font-smoothing:antialiased;
+    padding:16px;-webkit-font-smoothing:antialiased;
   }
+
+  /* ---------- The map (same design; shrinks when the agent card opens) ---------- */
+  .stage{min-height:calc(100vh - 32px);display:grid;place-items:center}
+  body.focused .stage{min-height:0}
 
   /* 16:9 slide that scales to fit the viewport; all sizes in container units */
   .slide{
-    width:min(calc(100vw - 32px), calc((100vh - 32px) * 16 / 9));
+    --k:1;
+    width:calc(min(calc(100vw - 32px), calc((100vh - 32px) * 16 / 9)) * var(--k));
+    transition:--k .55s cubic-bezier(.2,.7,.2,1);
     aspect-ratio:16/9;container-type:inline-size;
     background:var(--paper);border:1px solid var(--line);border-radius:1.2cqw;
     box-shadow:0 1px 2px #0000000a,0 2.5cqw 6cqw -2cqw #3a2f1a26;
     padding:2.6cqw 4cqw 2.2cqw;display:grid;grid-template-rows:auto 1fr auto;gap:1.4cqw;
   }
+  body.focused .slide{--k:.62}
 
   header{display:flex;justify-content:space-between;align-items:flex-end;gap:3cqw}
   .eyebrow{display:inline-flex;align-items:center;gap:.6cqw;font-size:.95cqw;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.9cqw}
   .eyebrow svg{width:1.1cqw;height:1.1cqw}
   h1{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:3cqw;line-height:1.1;letter-spacing:-.01em;max-width:52cqw}
   h1 em{font-style:italic;color:#7a5a2b}
-  .clock{flex:none;text-align:right;font-size:1cqw;color:var(--muted);line-height:1.5}
-  .clock b{display:block;font-family:Fraunces,serif;font-weight:600;font-size:2.4cqw;color:var(--ink);letter-spacing:-.01em}
 
   .matrix{display:grid;grid-template-columns:9cqw 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:.9cqw;min-height:0}
   .col-h{font-size:1.05cqw;font-weight:600;color:var(--muted);text-align:center;display:flex;align-items:center;justify-content:center;gap:.6cqw}
@@ -48,7 +56,7 @@
   .row-h{font-size:1.05cqw;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;text-align:right;padding-right:.6cqw;line-height:1.35}
 
   .q{border-radius:1cqw;padding:1.5cqw 1.7cqw;display:flex;flex-direction:column;gap:.7cqw;position:relative;overflow:hidden;
-     border:1px solid #0000000d;transition:transform .25s ease,box-shadow .25s ease}
+     border:1px solid #0000000d;transition:transform .25s ease,box-shadow .25s ease,opacity .35s ease}
   .q:hover{transform:translateY(-.2cqw);box-shadow:0 1.2cqw 2.5cqw -1.2cqw #00000026}
   .q .tag{position:absolute;top:1.4cqw;right:1.6cqw;font-family:Fraunces,serif;font-size:2.6cqw;opacity:.18;line-height:1}
   .q h2{font-size:1.45cqw;font-weight:600;letter-spacing:-.005em}
@@ -61,19 +69,158 @@
   .green{background:var(--green);color:var(--green-ink);--dot:var(--green-dot)}
   .rose{background:var(--rose);color:var(--rose-ink);--dot:var(--rose-dot)}
 
+  /* My quadrant is clickable */
+  .q.mine{cursor:pointer}
+  .q.mine:focus-visible{outline:.2cqw solid var(--blue-dot);outline-offset:.3cqw}
+  .q.mine .more{margin-top:auto;align-self:flex-start;font-size:1cqw;font-weight:600;border-bottom:1px solid currentColor;padding-bottom:.1cqw}
+  body.focused .q.mine{box-shadow:0 0 0 .25cqw var(--blue-dot)}
+  body.focused .q:not(.mine){opacity:.45}
+
   footer{display:flex;justify-content:space-between;align-items:center;font-size:.95cqw;color:var(--muted);border-top:1px solid var(--line);padding-top:1.2cqw}
   .legend{display:flex;gap:1.8cqw}
   .legend span{display:inline-flex;align-items:center;gap:.5cqw}
   .legend i{width:.8cqw;height:.8cqw;border-radius:.2cqw;display:inline-block}
 
+  /* ---------- Agent detail (card, explainer, Q1) ---------- */
+  .detail{width:min(calc(100vw - 32px),1180px);margin:22px auto 48px;display:grid;gap:18px}
+  .detail[hidden]{display:none}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .detail.show>*{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .detail.show>*:nth-child(2){animation-delay:.08s}
+  .detail.show>*:nth-child(3){animation-delay:.16s}
+
+  .card,.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 32px;box-shadow:0 1px 2px #0000000a,0 18px 40px -24px #3a2f1a33}
+  .kicker{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .kicker svg{width:14px;height:14px}
+
+  .card-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .card-title{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:clamp(26px,2.6vw,34px);line-height:1.1;letter-spacing:-.01em}
+  .card-title em{font-style:italic;color:#7a5a2b}
+
+  .row{display:grid;gap:14px;margin-top:14px}
+  .row.r1{grid-template-columns:2.2fr 1fr}
+  .row.r3{grid-template-columns:1fr 1.9fr}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .lbl{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .num{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-grid;place-items:center;font-size:11px;letter-spacing:0;color:var(--ink);background:var(--paper);flex:none}
+  .num.solid{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .box p{font-size:15px;line-height:1.55}
+  .box.never{background:var(--rose);border-color:#0000000d}
+  .box.never .lbl,.box.never b{color:var(--rose-ink)}
+  .box.check{background:var(--blue);border-color:#0000000d}
+  .box.check .lbl{color:var(--blue-ink)}
+
+  .chain{display:flex;align-items:stretch;gap:8px}
+  .tool{flex:1;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;min-width:0}
+  .tool b{display:block;font-size:13.5px;font-weight:600;margin-bottom:4px}
+  .tool span{display:block;font-size:12.5px;color:var(--muted);line-height:1.4}
+  .tool.rules{background:var(--blue);border-color:#0000000d} .tool.rules b{color:var(--blue-ink)}
+  .tool.auto{background:var(--green);border-color:#0000000d} .tool.auto b{color:var(--green-ink)}
+  .tool.sign{background:var(--rose);border-color:#0000000d} .tool.sign b{color:var(--rose-ink)}
+  .arrow{align-self:center;color:var(--muted);font-size:14px;flex:none}
+
+  /* Explainer */
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .sec-title{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:clamp(22px,2.1vw,28px);line-height:1.15;letter-spacing:-.01em}
+  .picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .picker>span{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .seg{display:inline-flex;flex-wrap:wrap;background:#efe9dd;border-radius:999px;padding:3px;gap:2px}
+  .seg button{border:0;background:transparent;font:500 13px Inter,system-ui,sans-serif;padding:7px 14px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px #0000001f}
+
+  .stepper{position:relative;margin:4px 0 22px}
+  .stepper .track,.stepper .fill{position:absolute;left:12.5%;top:17px;height:2px;background:var(--line)}
+  .stepper .track{right:12.5%}
+  .stepper .fill{background:var(--ink);width:0;transition:width .35s ease}
+  .steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+  .steps li{display:flex;justify-content:center}
+  .steps button{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;cursor:pointer;font:500 13px Inter,system-ui,sans-serif;color:var(--muted);padding:0 4px}
+  .dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--paper);border:2px solid var(--line);font-weight:600;font-size:14px;color:var(--muted);transition:transform .25s ease,background .25s ease,border-color .25s ease}
+  .steps button[aria-current="step"]{color:var(--ink)}
+  .steps button[aria-current="step"] .dot{transform:scale(1.1);color:var(--ink)}
+  .steps button.done .dot{border-color:var(--ink);color:var(--ink)}
+  .steps button[aria-current="step"] .dot.neutral{background:#efe9dd;border-color:var(--muted)}
+  .steps button[aria-current="step"] .dot.rules{background:var(--blue);border-color:var(--blue-dot)}
+  .steps button[aria-current="step"] .dot.auto{background:var(--green);border-color:var(--green-dot)}
+  .steps button[aria-current="step"] .dot.sign{background:var(--rose);border-color:var(--rose-dot)}
+
+  .stage-panel{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;min-height:270px;transition:opacity .18s ease}
+  .stage-panel.swap{opacity:0}
+  .actor{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+  .actor.neutral{background:#efe9dd;color:var(--muted)}
+  .actor.rules{background:var(--blue);color:var(--blue-ink)}
+  .actor.auto{background:var(--green);color:var(--green-ink)}
+  .actor.sign{background:var(--rose);color:var(--rose-ink)}
+  .stage-panel h4{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:25px;line-height:1.2;margin:12px 0 10px;letter-spacing:-.01em}
+  .stage-panel .txt{font-size:15px;line-height:1.65;color:#3a362f}
+  .stage-panel .txt+.txt{margin-top:10px}
+  .example{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .ex-lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14px}
+  .kv dt{color:var(--muted)} .kv dd{font-weight:600}
+  .checks{display:grid;gap:8px;font-size:14px}
+  .checks .line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .chip{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .chip.ok{background:var(--green);color:var(--green-ink)} .chip.bad{background:var(--rose);color:var(--rose-ink)}
+  .result{margin-top:4px;padding:10px 12px;border-radius:8px;border-left:4px solid}
+  .result small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;opacity:.8}
+  .result b{font-size:15px}
+  .result.ok{background:var(--green);border-color:var(--green-dot);color:var(--green-ink)}
+  .result.bad{background:var(--rose);border-color:var(--rose-dot);color:var(--rose-ink)}
+  .note{font-size:13px;line-height:1.5;color:var(--muted);margin-top:12px}
+  .note code{font-size:12px;background:#efe9dd;padding:1px 5px;border-radius:4px}
+  .mail{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px;background:#fff}
+  .mail-meta{padding:8px 12px;color:var(--muted);border-bottom:1px solid var(--line);font-size:12px}
+  .mail-subj{padding:10px 12px;font-weight:600;border-bottom:1px solid var(--line)}
+  .mail-band{background:var(--navy);color:#fff;padding:12px;font-weight:600;font-size:14px}
+  .mail-band small{display:block;color:#A9C4DD;font-size:10.5px;letter-spacing:.12em;font-weight:600;margin-bottom:3px}
+  .mail-lines{padding:10px 12px;display:grid;gap:6px}
+  .mail-lines div{display:flex;justify-content:space-between;gap:10px}
+  .mail-lines span{color:var(--muted)}
+  .todo{list-style:none;display:grid;gap:8px;font-size:14px}
+  .todo li{display:flex;gap:10px;align-items:flex-start;line-height:1.45}
+  .todo li::before{content:"";flex:none;width:15px;height:15px;margin-top:2px;border:1.5px solid var(--rose-dot);border-radius:4px;background:#fff}
+
+  .stepnav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+  .hint{font-size:12.5px;color:var(--muted);text-align:center}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;font:500 13px Inter,system-ui,sans-serif;color:var(--ink);cursor:pointer}
+  .btn:hover{border-color:#cfc8ba}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn:disabled{opacity:.35;cursor:default}
+
+  /* Q1 */
+  .qa{border-top:1px solid var(--line)}
+  .qa:last-of-type{border-bottom:1px solid var(--line)}
+  .qa summary{list-style:none;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:16px 4px;cursor:pointer}
+  .qa summary::-webkit-details-marker{display:none}
+  .qa .letter{font-family:Fraunces,serif;font-size:20px;color:#7a5a2b}
+  .qa .qt{font-weight:600;font-size:16px}
+  .qa .chev{color:var(--muted);transition:transform .2s ease}
+  .qa[open] .chev{transform:rotate(180deg)}
+  .qa .body{padding:0 4px 20px 50px}
+  .qa .ask{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:12px;font-style:italic}
+  .qa .body>p{font-size:15px;line-height:1.65;margin-bottom:10px}
+  .pill{display:inline-block;font-weight:600;font-size:14px;padding:6px 12px;border-radius:999px;margin-bottom:10px}
+  .pill.blue{background:var(--blue);color:var(--blue-ink)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mini{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .mini h5{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .mini .verdict{font-family:Fraunces,serif;font-size:19px;margin:4px 0 6px}
+  .mini p{font-size:14px;line-height:1.6}
+  .rows{display:grid;gap:10px}
+  .rows>div{display:grid;grid-template-columns:150px 1fr;gap:14px;font-size:15px;line-height:1.6}
+  .rows>div>b{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+
+  .backrow{display:flex;justify-content:center}
+
   /* Phone / narrow portrait: drop the fixed ratio and stack */
   @media (max-width:760px), (max-aspect-ratio:1/1){
-    body{display:block;padding:16px}
+    body{padding:16px}
+    .stage{min-height:0;display:block}
     .slide{width:100%;aspect-ratio:auto;container-type:normal;border-radius:14px;padding:22px 18px;gap:20px}
     header{flex-direction:column;align-items:flex-start;gap:12px}
     .eyebrow{font-size:11px;gap:6px;margin-bottom:8px} .eyebrow svg{width:13px;height:13px}
     h1{font-size:26px;max-width:none}
-    .clock{text-align:left;font-size:12px} .clock b{font-size:22px}
     .matrix{grid-template-columns:1fr;grid-template-rows:none;gap:12px}
     .col-h,.row-h,.corner{display:none}
     .q{border-radius:12px;padding:18px;gap:8px}
@@ -81,12 +228,31 @@
     .q h2{font-size:17px} .q .sub{font-size:13px;margin-top:-4px}
     .q ul{gap:6px} .q li{font-size:14.5px;padding-left:16px} .q li::before{top:7px;width:7px;height:7px}
     .q::after{content:attr(data-axes);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.6;order:-1}
+    .q.mine .more{font-size:13px}
+    body.focused .q.mine{box-shadow:0 0 0 3px var(--blue-dot)}
     footer{flex-direction:column;align-items:flex-start;gap:10px;font-size:12px;padding-top:14px}
     .legend{flex-wrap:wrap;gap:12px} .legend i{width:10px;height:10px;border-radius:3px}
+  }
+  @media (max-width:860px){
+    .detail{width:100%}
+    .card,.panel{padding:20px 18px}
+    .card-head{flex-direction:column;align-items:flex-start}
+    .row.r1,.row.r3,.stage-panel,.two{grid-template-columns:1fr}
+    .chain{flex-direction:column}
+    .arrow{transform:rotate(90deg);align-self:center}
+    .steps button{font-size:11px}
+    .dot{width:30px;height:30px;font-size:12px}
+    .stepper .track,.stepper .fill{top:14px}
+    .qa .body{padding-left:4px}
+    .rows>div{grid-template-columns:1fr;gap:2px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
   }
 </style>
 </head>
 <body>
+<div class="stage">
 <main class="slide">
   <header>
     <div>
@@ -104,13 +270,14 @@
     <div class="col-h">No single right answer</div>
 
     <div class="row-h">People and AI<br>must work together</div>
-    <article class="q blue" data-axes="Right answer · Work together">
+    <article class="q blue mine" id="mine" role="button" tabindex="0" aria-expanded="false" aria-controls="agent" data-axes="Right answer · Work together">
       <span class="tag">01</span>
       <h2>A person leads, AI inside</h2>
       <p class="sub">There's a correct answer, but only I know the rules</p>
       <ul>
         <li>Expense claims for out-of-pocket business expenditure</li>
       </ul>
+      <span class="more">See Revan's agent card ↓</span>
     </article>
     <article class="q amber" data-axes="No single answer · Work together">
       <span class="tag">02</span>
@@ -150,5 +317,303 @@
     </div>
   </footer>
 </main>
+</div>
+
+<section class="detail" id="agent" hidden>
+
+  <!-- ===== Agent card ===== -->
+  <article class="card" aria-labelledby="card-title">
+    <div class="card-head">
+      <div>
+        <div class="kicker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+          Revan's agent card · Quadrant 01
+        </div>
+        <h2 class="card-title" id="card-title">Expense Claim <em>Pre-Check</em></h2>
+      </div>
+    </div>
+
+    <div class="row r1">
+      <div class="box">
+        <div class="lbl"><span class="num">1</span>The job</div>
+        <p>Checks each staff expense claim against the company expense policy (category limit, 30-day deadline, receipt rule) and emails the result to the line manager.</p>
+      </div>
+      <div class="box">
+        <div class="lbl"><span class="num">2</span>The trigger</div>
+        <p>A new claim submitted on the Staff Expense Claim Google Form, which adds a new row in the response sheet.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="box">
+        <div class="lbl"><span class="num">3</span>The tools</div>
+        <div class="chain">
+          <div class="tool"><b>Google Forms</b><span>Collects the employee's claim</span></div>
+          <span class="arrow">→</span>
+          <div class="tool rules"><b>Google Sheets · formulas</b><span>Apply the three policy rules and write PASS or FAIL</span></div>
+          <span class="arrow">→</span>
+          <div class="tool"><b>Zapier · New Spreadsheet Row</b><span>Trigger: each new claim row starts a run</span></div>
+          <span class="arrow">→</span>
+          <div class="tool auto"><b>Gmail · Send Email</b><span>Action: pre-check email to the line manager (my own address)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row r3">
+      <div class="box never">
+        <div class="lbl"><span class="num solid">4</span>It must never</div>
+        <p><b>Approve or reject a claim, or email an employee.</b> The Zap's only action is Gmail Send Email, and its "To" field is fixed to my own address, so every result goes to the manager first.</p>
+      </div>
+      <div class="box check">
+        <div class="lbl"><span class="num solid">5</span>Where a person checks</div>
+        <p>The line manager reads each pre-check email within 2 working days. They check the receipt and the business purpose, then record the decision in the Manager sign-off column.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- ===== Interactive explainer ===== -->
+  <section class="panel" aria-labelledby="ex-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Interactive explainer</div>
+        <h3 class="sec-title" id="ex-title">How a claim moves through the agent</h3>
+      </div>
+      <div class="picker">
+        <span>Try a claim</span>
+        <div class="seg" id="seg" role="group" aria-label="Sample claim"></div>
+      </div>
+    </div>
+
+    <div class="stepper">
+      <div class="track"></div><div class="fill" id="fill"></div>
+      <ol class="steps" id="steps"></ol>
+    </div>
+
+    <div class="stage-panel" id="stagePanel" aria-live="polite"></div>
+
+    <div class="stepnav">
+      <button class="btn" id="prev">← Back</button>
+      <span class="hint" id="stepCount"></span>
+      <button class="btn primary" id="next">Next →</button>
+    </div>
+  </section>
+
+  <!-- ===== Q1 ===== -->
+  <section class="panel" aria-labelledby="q1-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Q1 · Placing it on the map</div>
+        <h3 class="sec-title" id="q1-title">Where my agent sits, and what it means for the person in the loop</h3>
+      </div>
+      <button class="btn" id="toggleAll">Collapse all</button>
+    </div>
+
+    <details class="qa" open>
+      <summary><span class="letter">(a)</span><span class="qt">Your quadrant</span><span class="chev">⌄</span></summary>
+      <div class="body">
+        <p class="ask">Name your agent's quadrant by its exact title on the map above: A person leads, AI inside (top left), Agents run it, a person judges (top right), AI alone, with checks (bottom left) or A person decides, AI alongside (bottom right).</p>
+        <span class="pill blue">A person leads, AI inside · top left</span>
+        <p>The agent does the rule-checking inside a process that the line manager leads and signs off. It never closes a claim by itself.</p>
+      </div>
+    </details>
+
+    <details class="qa" open>
+      <summary><span class="letter">(b)</span><span class="qt">The two questions</span><span class="chev">⌄</span></summary>
+      <div class="body">
+        <p class="ask">Justify it with the map's two questions, using evidence from your runs. Is the job work with a right answer or work with no single right answer? Is it work that people and AI must do together or work that either of them can do alone?</p>
+        <div class="two">
+          <div class="mini">
+            <h5>Right answer or not?</h5>
+            <div class="verdict">Work with a right answer</div>
+            <p>Every check is a fixed policy rule: the category limit, the 30-day deadline and the receipt rule. The same claim always gets the same result, and I can verify each one by hand. In my runs, a S$214 client-entertainment claim came back "OVER by S$64.00" against the S$150 limit, and a S$120 meal came back "OVER by S$90.00" against S$30. Both match the policy exactly. Even my tricky case had a right answer: a category with no rule broke the check, which meant a rule was missing, not that judgement was needed.</p>
+          </div>
+          <div class="mini">
+            <h5>Together or alone?</h5>
+            <div class="verdict">People and AI must do it together</div>
+            <p>The agent can't finish the job alone. It can't tell whether a receipt is real or whether a dinner was really for business, and company policy needs a named manager to approve. The manager doesn't redo the arithmetic either: they start from the agent's checked result and add the judgement only a person can give.</p>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="qa" open>
+      <summary><span class="letter">(c)</span><span class="qt">The person in the loop</span><span class="chev">⌄</span></summary>
+      <div class="body">
+        <p class="ask">Say what this means for the human in the loop: where a person stays at the gate and what they check, what your agent may do alone, and what would move it to another quadrant.</p>
+        <div class="rows">
+          <div><b>At the gate</b><span>The line manager, within 2 working days of each pre-check email. They check what the formulas can't: that the receipt matches the amount and date, and that the purpose is a genuine business expense. They also decide whether any FAIL deserves an exception, then record the decision in the Manager sign-off column.</span></div>
+          <div><b>May do alone</b><span>Read the claim, apply the three rules, write PASS or FAIL with reasons, and email the manager. It may never approve, reject or email an employee: its only action is Gmail Send Email, with the "To" field fixed to my address.</span></div>
+          <div><b>What would move it</b><span>If claims that pass and are under S$20 were approved automatically, with a monthly audit, it would move to <em>AI alone, with checks</em>. If the agent had to judge whether an expense was appropriate where no rule exists, the work would lose its right answer. It would move right, to <em>Agents run it, a person judges</em>, with the agent drafting options for the manager to choose from.</span></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="qa" open>
+      <summary><span class="letter">(d)</span><span class="qt">Your group's view</span><span class="chev">⌄</span></summary>
+      <div class="body">
+        <p class="ask">Do you agree with where your group placed its agents in class? Name any of the map's two questions you would answer differently from your group, and why.</p>
+        <p>I agree with most of our placements. The HR leave report and the 7 AM weather note follow fixed rules and could run alone, so they belong bottom left. The CRM agent that drafts options for a person to choose from belongs top right. I also agree with my own placement, with one nuance: the policy checks have a right answer, but the final approval includes judgement, so my agent only covers the right-answer part.</p>
+        <p>The one I'd answer differently is the Priority customer support assistant, which we placed bottom right. On <b>"together or alone?"</b> I'd say they must do it together. Replies to priority customers carry brand and service-recovery risk, so the AI shouldn't act alone. In its build, the AI writes the assessment, report and draft while the manager reviews and chooses. That's agents running the process with a person judging inside it, so I'd put it top right.</p>
+      </div>
+    </details>
+  </section>
+
+  <div class="backrow"><button class="btn" id="backBtn">↑ Back to the map</button></div>
+</section>
+
+<script>
+(function(){
+  /* ---------- Open / close the agent card ---------- */
+  var body = document.body;
+  var mine = document.getElementById('mine');
+  var more = mine.querySelector('.more');
+  var detail = document.getElementById('agent');
+
+  function setOpen(open){
+    body.classList.toggle('focused', open);
+    mine.setAttribute('aria-expanded', open);
+    more.textContent = open ? 'Hide agent card ↑' : "See Revan's agent card ↓";
+    if (open){
+      detail.hidden = false;
+      requestAnimationFrame(function(){ detail.classList.add('show'); });
+      setTimeout(function(){
+        /* Only scroll if the card would start low on the screen; keep the map in view */
+        var top = detail.getBoundingClientRect().top;
+        if (top > window.innerHeight * 0.72){
+          window.scrollTo({top: window.scrollY + top - window.innerHeight * 0.55, behavior: 'smooth'});
+        }
+      }, 560);
+    } else {
+      detail.classList.remove('show');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+      setTimeout(function(){ if (!body.classList.contains('focused')) detail.hidden = true; }, 350);
+    }
+  }
+  mine.addEventListener('click', function(){ setOpen(!body.classList.contains('focused')); });
+  mine.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); mine.click(); }
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){
+    setOpen(false); mine.focus({preventScroll: true});
+  });
+  if (location.hash === '#agent') setOpen(true);
+
+  /* ---------- Explainer: same rules as the Google Sheet ---------- */
+  var POLICY = {"Meal": 30, "Taxi": 50, "Client entertainment": 150, "Medical Claim": 300};
+  var CLAIMS = [
+    {key:'pass',   label:'Passes',      name:'Mei',   cat:'Taxi',                 purpose:'Taxi to a client meeting',    amt:28,  days:3,  receipt:'Yes'},
+    {key:'over',   label:'Over limit',  name:'Jack',  cat:'Client entertainment', purpose:'Business proposal dinner',    amt:214, days:12, receipt:'Yes'},
+    {key:'late',   label:'Late',        name:'Arjun', cat:'Meal',                 purpose:'Lunch during a site visit',   amt:25,  days:41, receipt:'Yes'},
+    {key:'tricky', label:'Tricky case', name:'Sara',  cat:'Other',                purpose:'Printing for a client pitch', amt:60,  days:2,  receipt:'No'}
+  ];
+
+  function check(c){
+    var limit = POLICY[c.cat];
+    var hasLimit = typeof limit === 'number';
+    var within = hasLimit ? (c.amt <= limit ? 'OK' : 'OVER by S$' + (c.amt - limit).toFixed(2)) : 'NO LIMIT SET – manager review';
+    var ontime = c.days <= 30 ? 'OK' : 'LATE (' + c.days + ' days)';
+    var receipt = (c.amt > 20 && c.receipt !== 'Yes') ? 'MISSING' : 'OK';
+    var pass = within === 'OK' && ontime === 'OK' && receipt === 'OK';
+    var parts = [];
+    if (within !== 'OK') parts.push(within);
+    if (ontime !== 'OK') parts.push(ontime);
+    if (receipt !== 'OK') parts.push('Receipt missing');
+    return {limit:limit, hasLimit:hasLimit, within:within, ontime:ontime, receipt:receipt, pass:pass,
+            result: pass ? 'PASS' : 'FAIL: ' + parts.join(' ')};
+  }
+  function chip(v){ return '<span class="chip ' + (v === 'OK' ? 'ok' : 'bad') + '">' + v + '</span>'; }
+
+  var STEPS = [
+    { short:'Submit', actor:'Employee', cls:'neutral', title:'The employee submits a claim',
+      text:['The claim arrives through the Staff Expense Claim form. It covers one expense, every field is required, and the amount must be a number above 0.',
+            'Nothing is decided yet. The form only collects the facts the rules need.'],
+      ex:function(c){ return '<div class="ex-lbl">What the form collects</div><dl class="kv">' +
+        '<dt>Name</dt><dd>' + c.name + '</dd><dt>Category</dt><dd>' + c.cat + '</dd><dt>Purpose</dt><dd>' + c.purpose + '</dd>' +
+        '<dt>Amount</dt><dd>S$' + c.amt + '</dd><dt>Date of expense</dt><dd>' + c.days + ' days ago</dd><dt>Receipt available</dt><dd>' + c.receipt + '</dd></dl>'; } },
+    { short:'Check', actor:'AI inside · encode my rules', cls:'rules', title:'The sheet checks it against the policy',
+      text:['Formulas in the response sheet apply three fixed rules the moment the row lands: the category limit, the 30-day deadline and the receipt rule.',
+            'The same claim always gets the same answer. That is what makes this work with a right answer.'],
+      ex:function(c, r){ return '<div class="ex-lbl">What the agent checked</div><div class="checks">' +
+        '<div class="line"><span>Within category limit (' + (r.hasLimit ? 'S$' + r.limit : 'none set') + ')</span>' + chip(r.within) + '</div>' +
+        '<div class="line"><span>Submitted within 30 days (' + c.days + ' days)</span>' + chip(r.ontime) + '</div>' +
+        '<div class="line"><span>Receipt (required above S$20)</span>' + chip(r.receipt) + '</div>' +
+        '<div class="result ' + (r.pass ? 'ok' : 'bad') + '"><small>Result</small><b>' + r.result + '</b></div></div>' +
+        (c.key === 'tricky' ? '<p class="note">Before my fix, this showed <code>#N/A</code> because "Other" had no rule. The fix sends it to the manager instead of breaking.</p>' : ''); } },
+    { short:'Notify', actor:'Automate · Zapier', cls:'auto', title:'Zapier emails the line manager',
+      text:['One trigger and one action: New Spreadsheet Row, then Gmail Send Email. The email carries the claim, each check and the result.',
+            'The "To" field is fixed to my own address, so nothing reaches the employee.'],
+      ex:function(c, r){ return '<div class="ex-lbl">The pre-check email</div><div class="mail">' +
+        '<div class="mail-meta">To: line manager (my address)</div>' +
+        '<div class="mail-subj">Expense claim · ' + c.name + ' · S$' + c.amt + ' · ' + r.result + '</div>' +
+        '<div class="mail-band"><small>ORCHID BAY CONSULTING · FINANCE</small>Expense claim ready for sign-off</div>' +
+        '<div class="mail-lines"><div><span>Within limit</span><b>' + r.within + '</b></div><div><span>On time</span><b>' + r.ontime + '</b></div><div><span>Receipt</span><b>' + r.receipt + '</b></div></div></div>'; } },
+    { short:'Sign off', actor:'Person · the gate', cls:'sign', title:'The manager checks and signs off',
+      text:['This is where a person signs off what the agent has checked. Within 2 working days, the line manager checks what formulas cannot: is the receipt genuine, does it match the amount, and was it really for business?',
+            'The decision goes into the Manager sign-off column.'],
+      ex:function(c, r){ return '<div class="ex-lbl">The manager\'s checklist</div><ul class="todo">' +
+        '<li>Receipt matches S$' + c.amt + ' and the expense date</li>' +
+        '<li>"' + c.purpose + '" is a genuine business expense</li>' +
+        (r.pass ? '' : '<li>Is an exception justified? (' + r.result.replace('FAIL: ', '') + ')</li>') +
+        '<li>Decision recorded in the Manager sign-off column</li></ul>' +
+        '<p class="note">' + (r.pass ? 'PASS is a pre-check, not an approval. The manager still signs.' : 'FAIL is a flag, not a rejection. The manager decides.') + '</p>'; } }
+  ];
+
+  var ci = 1, si = 0;
+  var seg = document.getElementById('seg'), stepsEl = document.getElementById('steps');
+  var panel = document.getElementById('stagePanel'), fill = document.getElementById('fill');
+  var prev = document.getElementById('prev'), next = document.getElementById('next'), count = document.getElementById('stepCount');
+
+  CLAIMS.forEach(function(c, i){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = c.label;
+    b.addEventListener('click', function(){ ci = i; render(true); });
+    seg.appendChild(b);
+  });
+  STEPS.forEach(function(s, i){
+    var li = document.createElement('li');
+    li.innerHTML = '<button type="button"><span class="dot ' + s.cls + '">' + (i + 1) + '</span><span>' + s.short + '</span></button>';
+    li.firstChild.addEventListener('click', function(){ si = i; render(true); });
+    stepsEl.appendChild(li);
+  });
+
+  function render(animate){
+    var c = CLAIMS[ci], r = check(c), s = STEPS[si];
+    Array.prototype.forEach.call(seg.children, function(b, i){ b.setAttribute('aria-pressed', i === ci); });
+    Array.prototype.forEach.call(stepsEl.children, function(li, i){
+      var b = li.firstChild;
+      if (i === si) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+      b.classList.toggle('done', i < si);
+    });
+    fill.style.width = (75 * si / (STEPS.length - 1)) + '%';
+    prev.disabled = si === 0; next.disabled = si === STEPS.length - 1;
+    count.textContent = 'Step ' + (si + 1) + ' of ' + STEPS.length + ' · use ← → keys';
+    var html = '<div><span class="actor ' + s.cls + '">' + s.actor + '</span><h4>' + s.title + '</h4>' +
+      s.text.map(function(t){ return '<p class="txt">' + t + '</p>'; }).join('') + '</div>' +
+      '<div class="example">' + s.ex(c, r) + '</div>';
+    if (animate){
+      panel.classList.add('swap');
+      setTimeout(function(){ panel.innerHTML = html; panel.classList.remove('swap'); }, 160);
+    } else { panel.innerHTML = html; }
+  }
+  prev.addEventListener('click', function(){ if (si > 0){ si--; render(true); } });
+  next.addEventListener('click', function(){ if (si < STEPS.length - 1){ si++; render(true); } });
+  document.addEventListener('keydown', function(e){
+    if (!body.classList.contains('focused')) return;
+    if (e.target.closest && e.target.closest('input,textarea,select')) return;
+    if (e.key === 'ArrowRight' && si < STEPS.length - 1){ si++; render(true); }
+    if (e.key === 'ArrowLeft' && si > 0){ si--; render(true); }
+  });
+  render(false);
+
+  /* ---------- Q1 expand / collapse all ---------- */
+  var toggle = document.getElementById('toggleAll');
+  toggle.addEventListener('click', function(){
+    var items = document.querySelectorAll('.qa');
+    var anyOpen = Array.prototype.some.call(items, function(d){ return d.open; });
+    items.forEach(function(d){ d.open = !anyOpen; });
+    toggle.textContent = anyOpen ? 'Expand all' : 'Collapse all';
+  });
+})();
+</script>
 </body>
 </html>
