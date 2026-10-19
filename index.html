@@ -89,6 +89,7 @@
   .detail.show>*:nth-child(2){animation-delay:.08s}
   .detail.show>*:nth-child(3){animation-delay:.16s}
   .detail.show>*:nth-child(4){animation-delay:.24s}
+  .detail.show>*:nth-child(n+5){animation-delay:.3s}
 
   .card,.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 32px;box-shadow:0 1px 2px #0000000a,0 18px 40px -24px #3a2f1a33}
   .kicker{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
@@ -243,6 +244,20 @@
   pre.code{background:#1d1b18;color:#f4f1ea;border-radius:10px;padding:12px 14px;font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
   pre.code mark{background:#6aaa5c55;color:#e9f6e4;border-radius:3px;padding:0 2px}
 
+  /* Collaboration log and reflection */
+  .log .mini{padding:16px 18px}
+  .log .mini h5{margin-bottom:8px}
+  .log ul{padding-left:18px;font-size:14px;line-height:1.6;color:#3a362f}
+  .log li+li{margin-top:7px}
+  .log li::marker{color:var(--muted)}
+  .refl>div{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
+  .refl>div:last-child{border-bottom:1px solid var(--line)}
+  .refl p{font-size:15.5px;line-height:1.65}
+  .tagchip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;white-space:nowrap;justify-self:start}
+  .tagchip.green{background:var(--green);color:var(--green-ink)}
+  .tagchip.rose{background:var(--rose);color:var(--rose-ink)}
+  .tagchip.blue{background:var(--blue);color:var(--blue-ink)}
+
   /* Lightbox */
   .lb{position:fixed;inset:0;z-index:50;background:#1d1b18e8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
   .lb[hidden]{display:none}
@@ -283,6 +298,7 @@
     .qa .body{padding-left:4px}
     .rows>div{grid-template-columns:1fr;gap:2px}
     .shots.c2,.shots.c3,.callouts{grid-template-columns:1fr}
+    .refl>div{grid-template-columns:1fr;gap:8px}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
@@ -436,7 +452,7 @@
   </section>
 
   <!-- ===== Evidence: runs, tricky case, fix =====
-       Upload each screenshot to the top level of the repository with the exact file name shown.
+       Screenshots live in images/1-runs, images/2-tricky-case, images/3-fix and images/4-error-caught, with the exact file names shown.
        Any file that isn't uploaded yet shows a dashed "Screenshot to add" box instead. -->
   <section class="panel" id="evidence" aria-labelledby="ev-title">
     <div class="sec-head">
@@ -452,32 +468,32 @@
       <p class="ev-p">I submitted three claims through the form and checked each pre-check email against its sheet row and its entry in Zap history. One passed, one was over the category limit, and one was submitted 67 days after the expense. Every result matched the policy when I checked it by hand.</p>
       <div class="shots">
         <figure class="shot">
-          <img src="run-sheet.png" alt="Response sheet showing five claims and the agent's checks">
-          <figcaption><span>Response sheet: the three runs (Mei, Jack, Arjun) with the agent's policy checks and results</span><a class="dl" href="run-sheet.png" download>Download</a></figcaption>
+          <img src="images/1-runs/run-sheet.png" alt="Response sheet showing five claims and the agent's checks">
+          <figcaption><span>Response sheet: the three runs (Mei, Jack, Arjun) with the agent's policy checks and results</span><a class="dl" href="images/1-runs/run-sheet.png" download>Download</a></figcaption>
         </figure>
       </div>
       <div class="shots tall">
         <figure class="shot">
-          <img src="zap-history.png" alt="Zap history listing every run">
-          <figcaption><span>Zap history: every run marked Successful, including the three with wrong emails (see 4)</span><a class="dl" href="zap-history.png" download>Download</a></figcaption>
+          <img src="images/1-runs/zap-history.png" alt="Zap history listing every run">
+          <figcaption><span>Zap history: every run marked Successful, including the three with wrong emails (see 4)</span><a class="dl" href="images/1-runs/zap-history.png" download>Download</a></figcaption>
         </figure>
         <figure class="shot">
-          <img src="run1-email.png" alt="Pre-check email for a S$23 meal that passed">
-          <figcaption><span>Mei · S$23 meal → PASS</span><a class="dl" href="run1-email.png" download>Download</a></figcaption>
+          <img src="images/1-runs/run1-email.png" alt="Pre-check email for a S$23 meal that passed">
+          <figcaption><span>Mei · S$23 meal → PASS</span><a class="dl" href="images/1-runs/run1-email.png" download>Download</a></figcaption>
         </figure>
         <figure class="shot">
-          <img src="run2-email.png" alt="Pre-check email for a S$214 client entertainment claim over the limit">
-          <figcaption><span>Jack · S$214 client entertainment → FAIL: OVER by S$64.00</span><a class="dl" href="run2-email.png" download>Download</a></figcaption>
+          <img src="images/1-runs/run2-email.png" alt="Pre-check email for a S$214 client entertainment claim over the limit">
+          <figcaption><span>Jack · S$214 client entertainment → FAIL: OVER by S$64.00</span><a class="dl" href="images/1-runs/run2-email.png" download>Download</a></figcaption>
         </figure>
         <figure class="shot">
-          <img src="run3-email.png" alt="Pre-check email for a taxi claim submitted 67 days late">
-          <figcaption><span>Arjun · S$45 taxi, 67 days → FAIL: LATE (67 days)</span><a class="dl" href="run3-email.png" download>Download</a></figcaption>
+          <img src="images/1-runs/run3-email.png" alt="Pre-check email for a taxi claim submitted 67 days late">
+          <figcaption><span>Arjun · S$45 taxi, 67 days → FAIL: LATE (67 days)</span><a class="dl" href="images/1-runs/run3-email.png" download>Download</a></figcaption>
         </figure>
       </div>
       <div class="shots">
         <figure class="shot">
-          <img src="zap-run-detail.png" alt="One run in Zap history showing data in and data out">
-          <figcaption><span>Jack's run opened in Zap history: the sheet row it picked up (S$214, OVER by S$64.00) and the Gmail step that sent the email</span><a class="dl" href="zap-run-detail.png" download>Download</a></figcaption>
+          <img src="images/1-runs/zap-run-detail.png" alt="One run in Zap history showing data in and data out">
+          <figcaption><span>Jack's run opened in Zap history: the sheet row it picked up (S$214, OVER by S$64.00) and the Gmail step that sent the email</span><a class="dl" href="images/1-runs/zap-run-detail.png" download>Download</a></figcaption>
         </figure>
       </div>
     </div>
@@ -491,14 +507,14 @@
       <p class="note">My first attempt ("Tricky test 2") went in while the Zap was switched off, so no email was sent. I put the old formula back and resubmitted the future-dated claim as "Tricky case test 2" with the Zap on to capture the run.</p>
       <div class="shots">
         <figure class="shot">
-          <img src="tricky-sheet-before.png" alt="Sheet before the fix: a future-dated claim marked OK and PASS">
-          <figcaption><span>With the old formula: both future-dated claims (the first attempt and the captured run) have negative Days to Claim, yet On time says OK and the result is PASS</span><a class="dl" href="tricky-sheet-before.png" download>Download</a></figcaption>
+          <img src="images/2-tricky-case/tricky-sheet-before.png" alt="Sheet before the fix: a future-dated claim marked OK and PASS">
+          <figcaption><span>With the old formula: both future-dated claims (the first attempt and the captured run) have negative Days to Claim, yet On time says OK and the result is PASS</span><a class="dl" href="images/2-tricky-case/tricky-sheet-before.png" download>Download</a></figcaption>
         </figure>
       </div>
       <div class="shots tall">
         <figure class="shot">
-          <img src="tricky-email-before.png" alt="Pre-check email sent before the fix showing PASS">
-          <figcaption><span>The email the agent sent with the old formula: PASS</span><a class="dl" href="tricky-email-before.png" download>Download</a></figcaption>
+          <img src="images/2-tricky-case/tricky-email-before.png" alt="Pre-check email sent before the fix showing PASS">
+          <figcaption><span>The email the agent sent with the old formula: PASS</span><a class="dl" href="images/2-tricky-case/tricky-email-before.png" download>Download</a></figcaption>
         </figure>
       </div>
     </div>
@@ -512,20 +528,20 @@
       </div>
       <div class="shots">
         <figure class="shot">
-          <img src="fix-formula.png" alt="The updated On time formula in the formula bar">
-          <figcaption><span>The fix in the sheet: the new On time formula in K1</span><a class="dl" href="fix-formula.png" download>Download</a></figcaption>
+          <img src="images/3-fix/fix-formula.png" alt="The updated On time formula in the formula bar">
+          <figcaption><span>The fix in the sheet: the new On time formula in K1</span><a class="dl" href="images/3-fix/fix-formula.png" download>Download</a></figcaption>
         </figure>
       </div>
       <div class="shots tall">
         <figure class="shot">
-          <img src="fix-email-after.png" alt="Pre-check email from the rerun showing FAIL: FUTURE DATE">
-          <figcaption><span>The email from the rerun ("Trick case solution"): FAIL: FUTURE DATE</span><a class="dl" href="fix-email-after.png" download>Download</a></figcaption>
+          <img src="images/3-fix/fix-email-after.png" alt="Pre-check email from the rerun showing FAIL: FUTURE DATE">
+          <figcaption><span>The email from the rerun ("Trick case solution"): FAIL: FUTURE DATE</span><a class="dl" href="images/3-fix/fix-email-after.png" download>Download</a></figcaption>
         </figure>
       </div>
       <div class="shots">
         <figure class="shot">
-          <img src="fix-sheet-after.png" alt="Sheet after the fix: the rerun marked FUTURE DATE">
-          <figcaption><span>After the fix: the rerun (row 9) fails with FUTURE DATE. Row 8 also changed because the sheet recalculates every row, so the email above is the record of what the agent sent before the fix.</span><a class="dl" href="fix-sheet-after.png" download>Download</a></figcaption>
+          <img src="images/3-fix/fix-sheet-after.png" alt="Sheet after the fix: the rerun marked FUTURE DATE">
+          <figcaption><span>After the fix: the rerun (row 9) fails with FUTURE DATE. Row 8 also changed because the sheet recalculates every row, so the email above is the record of what the agent sent before the fix.</span><a class="dl" href="images/3-fix/fix-sheet-after.png" download>Download</a></figcaption>
         </figure>
       </div>
     </div>
@@ -538,12 +554,12 @@
       </div>
       <div class="shots tall">
         <figure class="shot">
-          <img src="error-email-pass.png" alt="Wrong email: a claim that passed shows OK as the result">
-          <figcaption><span>A S$23 meal that passed, but the email's result says "OK"</span><a class="dl" href="error-email-pass.png" download>Download</a></figcaption>
+          <img src="images/4-error-caught/error-email-pass.png" alt="Wrong email: a claim that passed shows OK as the result">
+          <figcaption><span>A S$23 meal that passed, but the email's result says "OK"</span><a class="dl" href="images/4-error-caught/error-email-pass.png" download>Download</a></figcaption>
         </figure>
         <figure class="shot">
-          <img src="error-email-late.png" alt="Wrong email: a late claim shows OK as the result and LATE under Receipt">
-          <figcaption><span>A claim 67 days late, but the result says "OK" and "LATE" shows up under Receipt</span><a class="dl" href="error-email-late.png" download>Download</a></figcaption>
+          <img src="images/4-error-caught/error-email-late.png" alt="Wrong email: a late claim shows OK as the result and LATE under Receipt">
+          <figcaption><span>A claim 67 days late, but the result says "OK" and "LATE" shows up under Receipt</span><a class="dl" href="images/4-error-caught/error-email-late.png" download>Download</a></figcaption>
         </figure>
       </div>
     </div>
@@ -607,6 +623,64 @@
         <p>The one I'd answer differently is the Priority customer support assistant, which we placed bottom right. On <b>"together or alone?"</b> I'd say they must do it together. Replies to priority customers carry brand and service-recovery risk, so the AI shouldn't act alone. In its build, the AI writes the assessment, report and draft while the manager reviews and chooses. That's agents running the process with a person judging inside it, so I'd put it top right.</p>
       </div>
     </details>
+  </section>
+
+  <!-- ===== Collaboration log ===== -->
+  <section class="panel" aria-labelledby="log-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Collaboration log</div>
+        <h3 class="sec-title" id="log-title">How I worked with AI on this agent</h3>
+      </div>
+    </div>
+    <div class="two log">
+      <div class="mini">
+        <h5>What I delegated to AI</h5>
+        <ul>
+          <li><b>To my agent:</b> checking each claim against the three policy rules, writing PASS or FAIL with reasons, and emailing the line manager.</li>
+          <li><b>To Claude (AI assistant):</b> ideas for each quadrant, the Google Sheets formulas, the HTML email template, the form wording and header image, building this page, and first drafts of Q1, this log and the reflection.</li>
+          <li><b>Kept for myself:</b> choosing the job and quadrant, setting the policy limits, running every test, and the final wording.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>What I checked, and how</h5>
+        <ul>
+          <li>Every email against its sheet row and its Zap history entry, field by field.</li>
+          <li>Each result by hand against the policy, e.g. S$214 − S$150 = S$64 over, and 67 days is more than 30.</li>
+          <li>Claude's formulas, by submitting test claims before turning the Zap on and again after every change.</li>
+          <li>This page, in a private window, and that every claim it shows matches a real run.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>One AI error I caught</h5>
+        <ul>
+          <li>Zap history marked three runs Successful, but the emails were wrong: the result said "OK" instead of PASS or LATE (67 days). An empty column had shifted the sheet, and my email reads fields by column letter. I caught it by comparing each email with its sheet row, deleted the column, and checked later runs (Evidence, part 4).</li>
+          <li>Also caught: a draft of this page from Claude described a "draft reply to the employee" step that my Zap doesn't have. I had it removed so the page only claims what the agent actually does.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>Time and cost</h5>
+        <ul>
+          <li><b>Cost: S$0.</b> Zapier's free plan (a two-step Zap, using under 15 of its 100 monthly tasks), Google Forms, Sheets and Gmail, and the free tiers of GitHub and Vercel. No card needed.</li>
+          <li><b>Time: about 8 hours over 17–19 Oct.</b> Form and sheet about 3 hours (mostly fixing formula and column errors), Zap and email about 1.5 hours, runs, tricky case and fix about 1.5 hours, and this page about 2 hours.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Reflection ===== -->
+  <section class="panel" aria-labelledby="refl-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Reflection</div>
+        <h3 class="sec-title" id="refl-title">Three sentences on how it went</h3>
+      </div>
+    </div>
+    <div class="refl">
+      <div><span class="tagchip green">Where it fitted</span><p>The agent fitted the rule-checking part of expense approval well: every check has a right answer, so it could pre-check each claim in seconds and leave the manager only the receipt and business-purpose judgement it can't make.</p></div>
+      <div><span class="tagchip rose">Where it failed</span><p>It failed wherever my rules or setup had gaps: it passed a claim dated in the future because I had only written a rule for late claims, and it sent wrong emails while still reporting Successful when a stray column shifted the fields it reads.</p></div>
+      <div><span class="tagchip blue">What I'd change</span><p>Next time I would protect the sheet's columns so they can't shift, check for impossible inputs such as future dates from the start, and add a duplicate-claim check before trusting it with real claims.</p></div>
+    </div>
   </section>
 
   <div class="backrow"><button class="btn" id="backBtn">↑ Back to the map</button></div>
