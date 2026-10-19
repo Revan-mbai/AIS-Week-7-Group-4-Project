@@ -88,6 +88,8 @@
   .detail.show>*{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
   .detail.show>*:nth-child(2){animation-delay:.08s}
   .detail.show>*:nth-child(3){animation-delay:.16s}
+  .detail.show>*:nth-child(4){animation-delay:.24s}
+  .detail.show>*:nth-child(n+5){animation-delay:.3s}
 
   .card,.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 32px;box-shadow:0 1px 2px #0000000a,0 18px 40px -24px #3a2f1a33}
   .kicker{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
@@ -213,6 +215,56 @@
 
   .backrow{display:flex;justify-content:center}
 
+  /* Evidence: runs, tricky case and fix */
+  .ev{margin-top:30px}
+  .sec-head + .ev{margin-top:0}
+  .ev-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .ev-h h4{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:22px;letter-spacing:-.01em}
+  .ev-h .num{width:24px;height:24px;font-size:12px}
+  .ev-p{font-size:15px;line-height:1.65;color:#3a362f;margin-bottom:14px;max-width:820px}
+  .shots{display:grid;gap:14px;margin-top:14px}
+  .shots.c2{grid-template-columns:repeat(2,1fr)}
+  .shots.c3{grid-template-columns:repeat(3,1fr)}
+  .shots.narrow{max-width:560px}
+  .shots.tall{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .shot{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .shot img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+  .shot figcaption{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 12px;font-size:13px;line-height:1.45;color:var(--muted);border-top:1px solid var(--line);margin-top:auto}
+  .shot .dl{color:var(--ink);font-weight:600;text-decoration:none;white-space:nowrap;border-bottom:1px solid currentColor}
+  .shot .missing{margin:12px;padding:26px 14px;text-align:center;border:1.5px dashed var(--amber-dot);background:#fbeccd66;border-radius:10px;font-size:13px;line-height:1.5;color:var(--amber-ink)}
+  .shot .missing code{display:inline-block;margin-top:4px;font-size:12px;background:#fff;padding:2px 6px;border-radius:4px}
+  .callouts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .callout{border-left:4px solid;border-radius:8px;padding:12px 16px;font-size:14.5px;line-height:1.6}
+  .callout b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+  .callout.amber{background:var(--amber);border-color:var(--amber-dot);color:#5a3d06}
+  .callout.rose{background:var(--rose);border-color:var(--rose-dot);color:var(--rose-ink)}
+  .callout.green{background:var(--green);border-color:var(--green-dot);color:var(--green-ink)}
+  .code-pair{display:grid;gap:10px;margin-top:4px}
+  .code-pair small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:4px}
+  pre.code{background:#1d1b18;color:#f4f1ea;border-radius:10px;padding:12px 14px;font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+  pre.code mark{background:#6aaa5c55;color:#e9f6e4;border-radius:3px;padding:0 2px}
+
+  /* Collaboration log and reflection */
+  .log .mini{padding:16px 18px}
+  .log .mini h5{margin-bottom:8px}
+  .log ul{padding-left:18px;font-size:14px;line-height:1.6;color:#3a362f}
+  .log li+li{margin-top:7px}
+  .log li::marker{color:var(--muted)}
+  .refl>div{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
+  .refl>div:last-child{border-bottom:1px solid var(--line)}
+  .refl p{font-size:15.5px;line-height:1.65}
+  .tagchip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;white-space:nowrap;justify-self:start}
+  .tagchip.green{background:var(--green);color:var(--green-ink)}
+  .tagchip.rose{background:var(--rose);color:var(--rose-ink)}
+  .tagchip.blue{background:var(--blue);color:var(--blue-ink)}
+
+  /* Lightbox */
+  .lb{position:fixed;inset:0;z-index:50;background:#1d1b18e8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
+  .lb[hidden]{display:none}
+  .lb img{max-width:100%;max-height:80vh;border-radius:8px;background:#fff;box-shadow:0 20px 60px #0008}
+  .lb-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;color:#e9e3d6;font-size:13px}
+  .lb-bar span{max-width:640px;text-align:center}
+
   /* Phone / narrow portrait: drop the fixed ratio and stack */
   @media (max-width:760px), (max-aspect-ratio:1/1){
     body{padding:16px}
@@ -245,6 +297,8 @@
     .stepper .track,.stepper .fill{top:14px}
     .qa .body{padding-left:4px}
     .rows>div{grid-template-columns:1fr;gap:2px}
+    .shots.c2,.shots.c3,.callouts{grid-template-columns:1fr}
+    .refl>div{grid-template-columns:1fr;gap:8px}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
@@ -397,6 +451,120 @@
     </div>
   </section>
 
+  <!-- ===== Evidence: runs, tricky case, fix =====
+       Upload each screenshot to the top level of the repository with the exact file name shown.
+       Any file that isn't uploaded yet shows a dashed "Screenshot to add" box instead. -->
+  <section class="panel" id="evidence" aria-labelledby="ev-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Runs, tricky case and fix</div>
+        <h3 class="sec-title" id="ev-title">Evidence from my runs</h3>
+      </div>
+      <span class="hint">Click any screenshot to enlarge or download it</span>
+    </div>
+
+    <div class="ev">
+      <div class="ev-h"><span class="num solid">1</span><h4>The runs</h4></div>
+      <p class="ev-p">I submitted three claims through the form and checked each pre-check email against its sheet row and its entry in Zap history. One passed, one was over the category limit, and one was submitted 67 days after the expense. Every result matched the policy when I checked it by hand.</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="run-sheet.png" alt="Response sheet showing five claims and the agent's checks">
+          <figcaption><span>Response sheet: the three runs (Mei, Jack, Arjun) with the agent's policy checks and results</span><a class="dl" href="run-sheet.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+      <div class="shots tall">
+        <figure class="shot">
+          <img src="zap-history.png" alt="Zap history listing every run">
+          <figcaption><span>Zap history: every run marked Successful, including the three with wrong emails (see 4)</span><a class="dl" href="zap-history.png" download>Download</a></figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="run1-email.png" alt="Pre-check email for a S$23 meal that passed">
+          <figcaption><span>Mei · S$23 meal → PASS</span><a class="dl" href="run1-email.png" download>Download</a></figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="run2-email.png" alt="Pre-check email for a S$214 client entertainment claim over the limit">
+          <figcaption><span>Jack · S$214 client entertainment → FAIL: OVER by S$64.00</span><a class="dl" href="run2-email.png" download>Download</a></figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="run3-email.png" alt="Pre-check email for a taxi claim submitted 67 days late">
+          <figcaption><span>Arjun · S$45 taxi, 67 days → FAIL: LATE (67 days)</span><a class="dl" href="run3-email.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <img src="zap-run-detail.png" alt="One run in Zap history showing data in and data out">
+          <figcaption><span>Jack's run opened in Zap history: the sheet row it picked up (S$214, OVER by S$64.00) and the Gmail step that sent the email</span><a class="dl" href="zap-run-detail.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="ev">
+      <div class="ev-h"><span class="num solid">2</span><h4>The tricky case: a claim dated in the future</h4></div>
+      <div class="callouts">
+        <div class="callout amber"><b>What I expected, written before the run</b>A claim dated 11 days ahead should be flagged. I expected the agent to miss it: Days to Claim would be −11, and since −11 is under 30, On time would say OK and the claim would PASS.</div>
+        <div class="callout rose"><b>What happened</b>As expected, the agent missed it. A medical claim dated 30 Oct, 11 days ahead, came back On time: OK and Result: PASS. The 30-day rule only checked for late claims, not future dates.</div>
+      </div>
+      <p class="note">My first attempt ("Tricky test 2") went in while the Zap was switched off, so no email was sent. I put the old formula back and resubmitted the future-dated claim as "Tricky case test 2" with the Zap on to capture the run.</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="tricky-sheet-before.png" alt="Sheet before the fix: a future-dated claim marked OK and PASS">
+          <figcaption><span>With the old formula: both future-dated claims (the first attempt and the captured run) have negative Days to Claim, yet On time says OK and the result is PASS</span><a class="dl" href="tricky-sheet-before.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+      <div class="shots tall">
+        <figure class="shot">
+          <img src="tricky-email-before.png" alt="Pre-check email sent before the fix showing PASS">
+          <figcaption><span>The email the agent sent with the old formula: PASS</span><a class="dl" href="tricky-email-before.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="ev">
+      <div class="ev-h"><span class="num solid">3</span><h4>The fix and the rerun</h4></div>
+      <p class="ev-p">I turned the Zap off, added a future-date check to the On time formula (K1), turned the Zap back on, then submitted the same claim again as "Trick case solution". It now fails with FUTURE DATE.</p>
+      <div class="code-pair">
+        <div><small>Before</small><pre class="code">={"On time"; ARRAYFORMULA(IF(B2:B="",, IF(J2:J&lt;=30, "OK", "LATE ("&amp;J2:J&amp;" days)")))}</pre></div>
+        <div><small>After</small><pre class="code">={"On time"; ARRAYFORMULA(IF(B2:B="",, <mark>IF(J2:J&lt;0, "FUTURE DATE",</mark> IF(J2:J&lt;=30, "OK", "LATE ("&amp;J2:J&amp;" days)"))))}</pre></div>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <img src="fix-formula.png" alt="The updated On time formula in the formula bar">
+          <figcaption><span>The fix in the sheet: the new On time formula in K1</span><a class="dl" href="fix-formula.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+      <div class="shots tall">
+        <figure class="shot">
+          <img src="fix-email-after.png" alt="Pre-check email from the rerun showing FAIL: FUTURE DATE">
+          <figcaption><span>The email from the rerun ("Trick case solution"): FAIL: FUTURE DATE</span><a class="dl" href="fix-email-after.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <img src="fix-sheet-after.png" alt="Sheet after the fix: the rerun marked FUTURE DATE">
+          <figcaption><span>After the fix: the rerun (row 9) fails with FUTURE DATE. Row 8 also changed because the sheet recalculates every row, so the email above is the record of what the agent sent before the fix.</span><a class="dl" href="fix-sheet-after.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="ev">
+      <div class="ev-h"><span class="num solid">4</span><h4>An error I caught</h4></div>
+      <div class="callouts">
+        <div class="callout rose"><b>What went wrong</b>Zap history marked these runs Successful, but the emails were wrong. The result box said "OK" instead of PASS or LATE (67 days), and every check sat one line off. An empty column had appeared in the sheet, shifting every check one column to the right. My email reads each field by column letter, so it picked up the wrong ones.</div>
+        <div class="callout green"><b>How I caught and fixed it</b>I compared each email with its sheet row instead of trusting the Successful status. I turned the Zap off, deleted the empty column and turned it back on. Later runs, like the rerun above, show the right fields. Lesson: a run can succeed and still be wrong.</div>
+      </div>
+      <div class="shots tall">
+        <figure class="shot">
+          <img src="error-email-pass.png" alt="Wrong email: a claim that passed shows OK as the result">
+          <figcaption><span>A S$23 meal that passed, but the email's result says "OK"</span><a class="dl" href="error-email-pass.png" download>Download</a></figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="error-email-late.png" alt="Wrong email: a late claim shows OK as the result and LATE under Receipt">
+          <figcaption><span>A claim 67 days late, but the result says "OK" and "LATE" shows up under Receipt</span><a class="dl" href="error-email-late.png" download>Download</a></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== Q1 ===== -->
   <section class="panel" aria-labelledby="q1-title">
     <div class="sec-head">
@@ -424,7 +592,7 @@
           <div class="mini">
             <h5>Right answer or not?</h5>
             <div class="verdict">Work with a right answer</div>
-            <p>Every check is a fixed policy rule: the category limit, the 30-day deadline and the receipt rule. The same claim always gets the same result, and I can verify each one by hand. In my runs, a S$23 meal passed. Claims of S$120 (meal), S$214 (client entertainment) and S$650 (medical) came back "OVER by" S$90.00, S$64.00 and S$350.00. A taxi claim made 67 days after the expense came back "LATE (67 days)". Even my tricky case had a right answer: a claim dated 11 days in the future passed, because the 30-day rule only checked for late claims. That was a missing rule, not a judgement call. After I added a future-date check, the same claim came back "FAIL: FUTURE DATE".</p>
+            <p>Every check is a fixed policy rule: the category limit, the 30-day deadline and the receipt rule. The same claim always gets the same result, and I can verify each one by hand. In my runs, a S$23 meal passed, a S$214 client-entertainment claim came back "OVER by S$64.00" against the S$150 limit, and a taxi claim made 67 days after the expense came back "LATE (67 days)". Even my tricky case had a right answer: a claim dated 11 days in the future passed, because the 30-day rule only checked for late claims. That was a missing rule, not a judgement call. After I added a future-date check, the same claim came back "FAIL: FUTURE DATE".</p>
           </div>
           <div class="mini">
             <h5>Together or alone?</h5>
@@ -457,8 +625,71 @@
     </details>
   </section>
 
+  <!-- ===== Collaboration log ===== -->
+  <section class="panel" aria-labelledby="log-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Collaboration log</div>
+        <h3 class="sec-title" id="log-title">How I worked with AI on this agent</h3>
+      </div>
+    </div>
+    <div class="two log">
+      <div class="mini">
+        <h5>What I delegated to AI</h5>
+        <ul>
+          <li><b>To my agent:</b> checking each claim against the three policy rules, writing PASS or FAIL with reasons, and emailing the line manager.</li>
+          <li><b>To Claude (AI assistant):</b> ideas for each quadrant, the Google Sheets formulas, the HTML email template, the form wording and header image, building this page, and first drafts of Q1, this log and the reflection.</li>
+          <li><b>Kept for myself:</b> choosing the job and quadrant, setting the policy limits, running every test, and the final wording.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>What I checked, and how</h5>
+        <ul>
+          <li>Every email against its sheet row and its Zap history entry, field by field.</li>
+          <li>Each result by hand against the policy, e.g. S$214 − S$150 = S$64 over, and 67 days is more than 30.</li>
+          <li>Claude's formulas, by submitting test claims before turning the Zap on and again after every change.</li>
+          <li>This page, in a private window, and that every claim it shows matches a real run.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>One AI error I caught</h5>
+        <ul>
+          <li>Zap history marked three runs Successful, but the emails were wrong: the result said "OK" instead of PASS or LATE (67 days). An empty column had shifted the sheet, and my email reads fields by column letter. I caught it by comparing each email with its sheet row, deleted the column, and checked later runs (Evidence, part 4).</li>
+          <li>Also caught: a draft of this page from Claude described a "draft reply to the employee" step that my Zap doesn't have. I had it removed so the page only claims what the agent actually does.</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>Time and cost</h5>
+        <ul>
+          <li><b>Cost: S$0.</b> Zapier's free plan (a two-step Zap, using under 15 of its 100 monthly tasks), Google Forms, Sheets and Gmail, and the free tiers of GitHub and Vercel. No card needed.</li>
+          <li><b>Time: about 8 hours over 17–19 Oct.</b> Form and sheet about 3 hours (mostly fixing formula and column errors), Zap and email about 1.5 hours, runs, tricky case and fix about 1.5 hours, and this page about 2 hours.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Reflection ===== -->
+  <section class="panel" aria-labelledby="refl-title">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Reflection</div>
+        <h3 class="sec-title" id="refl-title">Three sentences on how it went</h3>
+      </div>
+    </div>
+    <div class="refl">
+      <div><span class="tagchip green">Where it fitted</span><p>The agent fitted the rule-checking part of expense approval well: every check has a right answer, so it could pre-check each claim in seconds and leave the manager only the receipt and business-purpose judgement it can't make.</p></div>
+      <div><span class="tagchip rose">Where it failed</span><p>It failed wherever my rules or setup had gaps: it passed a claim dated in the future because I had only written a rule for late claims, and it sent wrong emails while still reporting Successful when a stray column shifted the fields it reads.</p></div>
+      <div><span class="tagchip blue">What I'd change</span><p>Next time I would protect the sheet's columns so they can't shift, check for impossible inputs such as future dates from the start, and add a duplicate-claim check before trusting it with real claims.</p></div>
+    </div>
+  </section>
+
   <div class="backrow"><button class="btn" id="backBtn">↑ Back to the map</button></div>
 </section>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot" hidden>
+  <img id="lbImg" alt="">
+  <div class="lb-bar"><span id="lbCap"></span><a class="btn" id="lbDl" download>Download</a><button class="btn" id="lbClose" type="button">Close</button></div>
+</div>
 
 <script>
 (function(){
@@ -499,12 +730,12 @@
 
   /* ---------- Explainer: same rules as the Google Sheet ---------- */
   var POLICY = {"Meal": 30, "Taxi": 50, "Client entertainment": 150, "Medical Claim": 300};
-  /* These are real runs from my response sheet */
+  /* The same claims I submitted as runs */
   var CLAIMS = [
-    {key:'pass',   label:'Passes',      name:'Test 2',        cat:'Meal',                 purpose:'Client catchup',     amt:23,  days:11,  receipt:'Yes'},
-    {key:'over',   label:'Over limit',  name:'Jack',          cat:'Client entertainment', purpose:'Business proposal',  amt:214, days:12,  receipt:'Yes'},
-    {key:'late',   label:'Late',        name:'Test 1',        cat:'Taxi',                 purpose:'Red eye flight',     amt:45,  days:67,  receipt:'Yes'},
-    {key:'tricky', label:'Tricky case', name:'Tricky test 2', cat:'Medical Claim',        purpose:'Workplace incident', amt:25,  days:-11, receipt:'Yes'}
+    {key:'pass',   label:'Passes',      name:'Mei',   cat:'Meal',                 purpose:'Client catchup',     amt:23,  days:11,  receipt:'Yes'},
+    {key:'over',   label:'Over limit',  name:'Jack',  cat:'Client entertainment', purpose:'Business proposal',  amt:214, days:12,  receipt:'Yes'},
+    {key:'late',   label:'Late',        name:'Arjun', cat:'Taxi',                 purpose:'Red eye flight',     amt:45,  days:67,  receipt:'Yes'},
+    {key:'tricky', label:'Tricky case', name:'Tricky case test 2', cat:'Medical Claim', purpose:'Workplace incident', amt:250, days:-11, receipt:'Yes'}
   ];
 
   function check(c){
@@ -617,11 +848,41 @@
   next.addEventListener('click', function(){ go(1); });
   document.addEventListener('keydown', function(e){
     if (!body.classList.contains('focused')) return;
+    if (!document.getElementById('lb').hidden) return;
     if (e.target.closest && e.target.closest('input,textarea,select')) return;
     if (e.key === 'ArrowRight') go(1);
     if (e.key === 'ArrowLeft') go(-1);
   });
   render(false);
+
+  /* ---------- Screenshots: placeholder if missing, click to enlarge ---------- */
+  var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
+  var lbCap = document.getElementById('lbCap'), lbDl = document.getElementById('lbDl');
+  function openLb(img){
+    lbImg.src = img.src; lbImg.alt = img.alt;
+    var cap = img.closest('.shot').querySelector('figcaption span');
+    lbCap.textContent = cap ? cap.textContent : '';
+    lbDl.href = img.getAttribute('src');
+    lb.hidden = false;
+  }
+  function closeLb(){ lb.hidden = true; lbImg.removeAttribute('src'); }
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e){ if (e.target === lb) closeLb(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+
+  document.querySelectorAll('.shot img').forEach(function(img){
+    function missing(){
+      var fig = img.closest('.shot');
+      var ph = document.createElement('div');
+      ph.className = 'missing';
+      ph.innerHTML = 'Screenshot to add: upload<br><code>' + img.getAttribute('src') + '</code>';
+      img.replaceWith(ph);
+      var dl = fig.querySelector('.dl'); if (dl) dl.remove();
+    }
+    if (img.complete && img.naturalWidth === 0) missing();
+    else img.addEventListener('error', missing);
+    img.addEventListener('click', function(){ openLb(img); });
+  });
 
   /* ---------- Q1 expand / collapse all ---------- */
   var toggle = document.getElementById('toggleAll');
