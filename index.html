@@ -89,7 +89,6 @@
   .detail.show>*:nth-child(2){animation-delay:.08s}
   .detail.show>*:nth-child(3){animation-delay:.16s}
   .detail.show>*:nth-child(4){animation-delay:.24s}
-  .detail.show>*:nth-child(n+5){animation-delay:.3s}
 
   .card,.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 32px;box-shadow:0 1px 2px #0000000a,0 18px 40px -24px #3a2f1a33}
   .kicker{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
@@ -244,20 +243,6 @@
   pre.code{background:#1d1b18;color:#f4f1ea;border-radius:10px;padding:12px 14px;font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
   pre.code mark{background:#6aaa5c55;color:#e9f6e4;border-radius:3px;padding:0 2px}
 
-  /* Collaboration log and reflection */
-  .log .mini{padding:16px 18px}
-  .log .mini h5{margin-bottom:8px}
-  .log ul{padding-left:18px;font-size:14px;line-height:1.6;color:#3a362f}
-  .log li+li{margin-top:7px}
-  .log li::marker{color:var(--muted)}
-  .refl>div{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
-  .refl>div:last-child{border-bottom:1px solid var(--line)}
-  .refl p{font-size:15.5px;line-height:1.65}
-  .tagchip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;white-space:nowrap;justify-self:start}
-  .tagchip.green{background:var(--green);color:var(--green-ink)}
-  .tagchip.rose{background:var(--rose);color:var(--rose-ink)}
-  .tagchip.blue{background:var(--blue);color:var(--blue-ink)}
-
   /* Lightbox */
   .lb{position:fixed;inset:0;z-index:50;background:#1d1b18e8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
   .lb[hidden]{display:none}
@@ -298,7 +283,6 @@
     .qa .body{padding-left:4px}
     .rows>div{grid-template-columns:1fr;gap:2px}
     .shots.c2,.shots.c3,.callouts{grid-template-columns:1fr}
-    .refl>div{grid-template-columns:1fr;gap:8px}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
@@ -623,64 +607,6 @@
         <p>The one I'd answer differently is the Priority customer support assistant, which we placed bottom right. On <b>"together or alone?"</b> I'd say they must do it together. Replies to priority customers carry brand and service-recovery risk, so the AI shouldn't act alone. In its build, the AI writes the assessment, report and draft while the manager reviews and chooses. That's agents running the process with a person judging inside it, so I'd put it top right.</p>
       </div>
     </details>
-  </section>
-
-  <!-- ===== Collaboration log ===== -->
-  <section class="panel" aria-labelledby="log-title">
-    <div class="sec-head">
-      <div>
-        <div class="kicker">Collaboration log</div>
-        <h3 class="sec-title" id="log-title">How I worked with AI on this agent</h3>
-      </div>
-    </div>
-    <div class="two log">
-      <div class="mini">
-        <h5>What I delegated to AI</h5>
-        <ul>
-          <li><b>To my agent:</b> checking each claim against the three policy rules, writing PASS or FAIL with reasons, and emailing the line manager.</li>
-          <li><b>To Claude (AI assistant):</b> ideas for each quadrant, the Google Sheets formulas, the HTML email template, the form wording and header image, building this page, and first drafts of Q1, this log and the reflection.</li>
-          <li><b>Kept for myself:</b> choosing the job and quadrant, setting the policy limits, running every test, and the final wording.</li>
-        </ul>
-      </div>
-      <div class="mini">
-        <h5>What I checked, and how</h5>
-        <ul>
-          <li>Every email against its sheet row and its Zap history entry, field by field.</li>
-          <li>Each result by hand against the policy, e.g. S$214 − S$150 = S$64 over, and 67 days is more than 30.</li>
-          <li>Claude's formulas, by submitting test claims before turning the Zap on and again after every change.</li>
-          <li>This page, in a private window, and that every claim it shows matches a real run.</li>
-        </ul>
-      </div>
-      <div class="mini">
-        <h5>One AI error I caught</h5>
-        <ul>
-          <li>Zap history marked three runs Successful, but the emails were wrong: the result said "OK" instead of PASS or LATE (67 days). An empty column had shifted the sheet, and my email reads fields by column letter. I caught it by comparing each email with its sheet row, deleted the column, and checked later runs (Evidence, part 4).</li>
-          <li>Also caught: a draft of this page from Claude described a "draft reply to the employee" step that my Zap doesn't have. I had it removed so the page only claims what the agent actually does.</li>
-        </ul>
-      </div>
-      <div class="mini">
-        <h5>Time and cost</h5>
-        <ul>
-          <li><b>Cost: S$0.</b> Zapier's free plan (a two-step Zap, using under 15 of its 100 monthly tasks), Google Forms, Sheets and Gmail, and the free tiers of GitHub and Vercel. No card needed.</li>
-          <li><b>Time: about 8 hours over 17–19 Oct.</b> Form and sheet about 3 hours (mostly fixing formula and column errors), Zap and email about 1.5 hours, runs, tricky case and fix about 1.5 hours, and this page about 2 hours.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== Reflection ===== -->
-  <section class="panel" aria-labelledby="refl-title">
-    <div class="sec-head">
-      <div>
-        <div class="kicker">Reflection</div>
-        <h3 class="sec-title" id="refl-title">Three sentences on how it went</h3>
-      </div>
-    </div>
-    <div class="refl">
-      <div><span class="tagchip green">Where it fitted</span><p>The agent fitted the rule-checking part of expense approval well: every check has a right answer, so it could pre-check each claim in seconds and leave the manager only the receipt and business-purpose judgement it can't make.</p></div>
-      <div><span class="tagchip rose">Where it failed</span><p>It failed wherever my rules or setup had gaps: it passed a claim dated in the future because I had only written a rule for late claims, and it sent wrong emails while still reporting Successful when a stray column shifted the fields it reads.</p></div>
-      <div><span class="tagchip blue">What I'd change</span><p>Next time I would protect the sheet's columns so they can't shift, check for impossible inputs such as future dates from the start, and add a duplicate-claim check before trusting it with real claims.</p></div>
-    </div>
   </section>
 
   <div class="backrow"><button class="btn" id="backBtn">↑ Back to the map</button></div>
